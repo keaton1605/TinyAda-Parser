@@ -170,6 +170,7 @@ public class Parser extends Object{
    */
    private void numberOrObjectDeclaration() {
       identifierList();
+      token = scanner.nextToken();
       accept(Token.COLON, "':' expected");
       if (token.code == Token.CONST){
          token = scanner.nextToken();
@@ -456,7 +457,7 @@ public class Parser extends Object{
    factor = primary [ "**" primary ] | "not" primary
    */
    private void factor() {
-	   if(token.code == Token.NOT) {
+	   if(token.code != Token.NOT) {
 		   primary();
 		   if(token.code == Token.EXPO)
 			   primary();
