@@ -189,6 +189,12 @@ public class Parser extends Object{
 	   accept(Token.TYPE, "'type' expected");
 	   accept(Token.ID, "'id' expected");
 	   accept(Token.IS, "'is' expected");
+	   //System.out.println(token.code);
+	   //token = scanner.nextToken();
+	   //System.out.println(token);
+	   //token = scanner.nextToken();
+	   //System.out.println(token);
+	   //System.out.println(token.code + " " + Token.RANGE);
 	   typeDefinition();
 	   accept(Token.SEMI, "';' expected");
    }
@@ -206,6 +212,7 @@ public class Parser extends Object{
 	           arrayTypeDefinition();
 	           break;
 	        case Token.RANGE:
+	           //System.out.println(token.code);
 	           range();
 	           break;
 	        case Token.ID:
@@ -259,7 +266,7 @@ public class Parser extends Object{
    range = "range" simpleExpression ".." simpleExpression
    */
    private void range() {
-	   accept(Token.ARRAY, "'array' expected");
+	   accept(Token.RANGE, "'array' expected");
 	   simpleExpression();
 	   accept(Token.THRU, "'..' expected");
 	   simpleExpression();
