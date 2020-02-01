@@ -10,7 +10,8 @@ public class Parser extends Object{
    private Chario chario;
    private Scanner scanner;
    private Token token;
-
+   private SymbolTable table;
+   
    private Set<Integer> addingOperator,
                         multiplyingOperator,
                         relationalOperator,
@@ -67,6 +68,40 @@ public class Parser extends Object{
       chario.putError(errorMessage);
       throw new RuntimeException("Fatal error");
    }
+   
+   /*
+   Three new routines for scope analysis.
+   */
+   
+   private void initTable(){
+	  table = new SymbolTable(chario);
+	  table.enterScope();
+	  table.enterSymbol("BOOLEAN");
+	  table.enterSymbol("CHAR");
+	  table.enterSymbol("INTEGER");
+	  table.enterSymbol("TRUE");
+	  table.enterSymbol("FALSE");
+   }      
+
+   private SymbolEntry enterId(){
+      SymbolEntry entry = null;
+      if (token.code == Token.ID)
+         entry = table.enterSymbol(token.string);
+      else
+         fatalError("identifier expected");
+      token = scanner.nextToken();
+      return entry;
+   }
+
+   private SymbolEntry findId(){
+      SymbolEntry entry = null;
+      if (token.code == Token.ID)
+         entry = table.findSymbol(token.string);
+      else
+         fatalError("identifier expected");
+      token = scanner.nextToken();
+      return entry;
+   }
 
    public void parse(){
       subprogramBody();
@@ -97,7 +132,7 @@ public class Parser extends Object{
    */
     private void subprogramSpecification() {
     	accept(Token.PROC, "'procedure' expected");
-    	accept(Token.ID, "'id' expected");
+    	accept(Token.ID, "identifier expected");
     	if (token.code == Token.L_PAR)
     		formalPart();
     }
@@ -187,7 +222,7 @@ public class Parser extends Object{
    */
    private void typeDeclaration() {
 	   accept(Token.TYPE, "'type' expected");
-	   accept(Token.ID, "'id' expected");
+	   accept(Token.ID, "identifier expected");
 	   accept(Token.IS, "'is' expected");
 	   typeDefinition();
 	   accept(Token.SEMI, "';' expected");
@@ -269,10 +304,10 @@ public class Parser extends Object{
    identifierList = identifier { "," identifier }
    */
    private void identifierList() {
-	   accept(Token.ID, "'id' expected");
+	   accept(Token.ID, "identifier expected");
 	   while(token.code == Token.COMMA) {
 		   token = scanner.nextToken();
-		   accept(Token.ID, "'id' expected");
+		   accept(Token.ID, "identifier expected");
 	   }
    }
 
