@@ -170,7 +170,7 @@ public class Parser extends Object{
    */
    private void numberOrObjectDeclaration() {
       identifierList();
-      token = scanner.nextToken();
+      //token = scanner.nextToken();
       accept(Token.COLON, "':' expected");
       if (token.code == Token.CONST){
          token = scanner.nextToken();
@@ -189,12 +189,6 @@ public class Parser extends Object{
 	   accept(Token.TYPE, "'type' expected");
 	   accept(Token.ID, "'id' expected");
 	   accept(Token.IS, "'is' expected");
-	   //System.out.println(token.code);
-	   //token = scanner.nextToken();
-	   //System.out.println(token);
-	   //token = scanner.nextToken();
-	   //System.out.println(token);
-	   //System.out.println(token.code + " " + Token.RANGE);
 	   typeDefinition();
 	   accept(Token.SEMI, "';' expected");
    }
@@ -212,7 +206,6 @@ public class Parser extends Object{
 	           arrayTypeDefinition();
 	           break;
 	        case Token.RANGE:
-	           //System.out.println(token.code);
 	           range();
 	           break;
 	        case Token.ID:
@@ -273,9 +266,10 @@ public class Parser extends Object{
    }
 
    /*
-   identifierList = { "," identifier }
+   identifierList = identifier { "," identifier }
    */
    private void identifierList() {
+	   accept(Token.ID, "'id' expected");
 	   while(token.code == Token.COMMA) {
 		   token = scanner.nextToken();
 		   accept(Token.ID, "'id' expected");
