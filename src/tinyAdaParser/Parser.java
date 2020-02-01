@@ -108,9 +108,10 @@ public class Parser extends Object{
     private void formalPart() {
     	accept(Token.L_PAR, "'(' expected");
     	parameterSpecification();
-    	while (token.code == Token.SEMI)
+    	while (token.code == Token.SEMI) {
     		token = scanner.nextToken();
     		parameterSpecification();
+    	}
     	accept(Token.R_PAR, "'}' expected");
     }
     
@@ -170,7 +171,6 @@ public class Parser extends Object{
    */
    private void numberOrObjectDeclaration() {
       identifierList();
-      //token = scanner.nextToken();
       accept(Token.COLON, "':' expected");
       if (token.code == Token.CONST){
          token = scanner.nextToken();
@@ -495,7 +495,7 @@ public class Parser extends Object{
    */
    private void name(){
       accept(Token.ID, "identifier expected");
-      if (token.code == Token.L_PAR)
+      if (token.code == Token.L_PAR) 
          indexedComponent();
    }
 
@@ -515,6 +515,5 @@ public class Parser extends Object{
    
    public static void main(String[] args)
    {
-	   System.out.println("Hello World");
    }
 }
