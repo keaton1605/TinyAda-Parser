@@ -22,11 +22,13 @@ public class Parser extends Object{
       chario = c;
       scanner = s;
       initHandles();
+      initTable();
       token = scanner.nextToken();
    }
 
    public void reset(){
       scanner.reset();
+      initTable();
       token = scanner.nextToken();
    }
 
@@ -106,6 +108,7 @@ public class Parser extends Object{
    public void parse(){
       subprogramBody();
       accept(Token.EOF, "extra symbols after logical end of program");
+      table.exitScope();
    }
 
    /*
@@ -122,8 +125,11 @@ public class Parser extends Object{
       accept(Token.BEGIN, "'begin' expected");
       sequenceOfStatements();
       accept(Token.END, "'end' expected");
-      if (token.code == Token.ID)
-         token = scanner.nextToken();
+      //table.exitScope();
+      if (token.code == Token.ID) {
+    	 accept(Token.ID, "identifier expected");
+         //findId();
+      }
       accept(Token.SEMI, "semicolon expected");
    }
 
@@ -133,6 +139,8 @@ public class Parser extends Object{
     private void subprogramSpecification() {
     	accept(Token.PROC, "'procedure' expected");
     	accept(Token.ID, "identifier expected");
+    	//enterId();
+    	//table.enterScope();
     	if (token.code == Token.L_PAR)
     		formalPart();
     }
@@ -151,13 +159,13 @@ public class Parser extends Object{
     }
     
    /*
-   parameterSpecification = identifierList ":" mode <type>name
+   parameterSpecification = identifierList ":" mode <type>identifier
    */
     private void parameterSpecification() {
     	identifierList();
     	accept(Token.COLON, "':' expected");
     	mode();
-    	name();
+    	accept(Token.ID, "identifier expected");
     }
     
    /*
@@ -230,7 +238,7 @@ public class Parser extends Object{
    
    /*
    typeDefinition = enumerationTypeDefinition | arrayTypeDefinition
-                  | range | <type>name
+                  | range | <type>identifier
    */
    private void typeDefinition() {
 	   switch (token.code) {
@@ -244,7 +252,7 @@ public class Parser extends Object{
 	           range();
 	           break;
 	        case Token.ID:
-	        	name();
+	        	accept(Token.ID, "identifier expected");
 	        	break;
 	        default: fatalError("error in definition part");
 	   }
@@ -272,7 +280,7 @@ public class Parser extends Object{
 	   }
 	   accept(Token.R_PAR, "')' expected");
 	   accept(Token.OF, "'of' expected");
-	   name();
+	   accept(Token.ID, "identifier expected");
    }
 
    /*
@@ -284,7 +292,7 @@ public class Parser extends Object{
 	   			range();
 	   			break;
 	   		case Token.ID:
-	   			name();
+	   			accept(Token.ID, "identifier expected");
 	   			break;
 	   		default: fatalError("error in index part");
 	   }
