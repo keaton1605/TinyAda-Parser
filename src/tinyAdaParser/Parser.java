@@ -64,6 +64,16 @@ public class Parser extends Object{
       statementHandles.add(Token.WHILE);
    }
 
+   private void acceptRole(SymbolEntry s, int expected, String errorMessage){
+      if (s.role != SymbolEntry.NONE && s.role != expected)
+         chario.putError(errorMessage);
+   }
+
+   private void acceptRole(SymbolEntry s, Set<Integer> expected, String errorMessage){
+      if (s.role != SymbolEntry.NONE && ! (expected.contains(s.role)))
+         chario.putError(errorMessage);
+   }
+   
    private void accept(int expected, String errorMessage){
       if (token.code != expected)
          fatalError(errorMessage);
@@ -141,7 +151,7 @@ public class Parser extends Object{
     	  table.exitScope();
       if (token.code == Token.ID) {
    	     //accept(Token.ID, "identifier expected");
-         findId();
+         SymbolEntry entry = findId();
       }
       accept(Token.SEMI, "semicolon expected");
    }
@@ -152,7 +162,8 @@ public class Parser extends Object{
     private void subprogramSpecification() {
     	accept(Token.PROC, "'procedure' expected");
  	    //accept(Token.ID, "identifier expected");
-    	enterId();
+    	SymbolEntry entry = enterId();
+    	entry.setRole(SymbolEntry.PROC);
     	table.enterScope();
     	if (token.code == Token.L_PAR)
     		formalPart();
@@ -175,11 +186,11 @@ public class Parser extends Object{
    parameterSpecification = identifierList ":" mode <type>identifier
    */
     private void parameterSpecification() {
-    	identifierList();
+    	/*SymbolEntry list = */identifierList();
     	accept(Token.COLON, "':' expected");
     	mode();
     	//accept(Token.ID, "identifier expected");
-    	findId();
+    	SymbolEntry entry = findId();
     }
     
    /*
@@ -227,15 +238,18 @@ public class Parser extends Object{
          identifierList ":" "constant" ":=" <static>expression ";"
    */
    private void numberOrObjectDeclaration() {
-      identifierList();
+      SymbolEntry list = identifierList();
       accept(Token.COLON, "':' expected");
       if (token.code == Token.CONST){
+         list.setRole(SymbolEntry.CONST);
          token = scanner.nextToken();
          accept(Token.GETS, "':=' expected");
          expression();
       }
-      else
+      else {
+         list.setRole(SymbolEntry.VAR);
          typeDefinition();
+      }
       accept(Token.SEMI, "semicolon expected");
    }
 
@@ -245,7 +259,8 @@ public class Parser extends Object{
    private void typeDeclaration() {
 	   accept(Token.TYPE, "'type' expected");
 	   //accept(Token.ID, "identifier expected");
-	   enterId();
+	   SymbolEntry entry = enterId();
+	   entry.setRole(SymbolEntry.TYPE);
 	   accept(Token.IS, "'is' expected");
 	   typeDefinition();
 	   accept(Token.SEMI, "semicolon expected");
@@ -279,7 +294,8 @@ public class Parser extends Object{
    */
    private void enumerationTypeDefinition() {
 	   accept(Token.L_PAR, "'(' expected");
-	   identifierList();
+	   /*SymbolEntry list = */identifierList();
+	   //list.setRole(SymbolEntry.CONST);
 	   accept(Token.R_PAR, "')' expected");
    }
    
@@ -310,9 +326,10 @@ public class Parser extends Object{
 	   			break;
 	   		case Token.ID:
 	   			//accept(Token.ID, "identifier expected");
-	   			findId();
+	   			SymbolEntry entry = findId();
+	   			acceptRole(entry, SymbolEntry.TYPE, "must be a type name");
 	   			break;
-	   		default: fatalError("error in index part");
+	   		default: fatalError("error in index type");
 	   }
    }
 
@@ -329,13 +346,16 @@ public class Parser extends Object{
    /*
    identifierList = identifier { "," identifier }
    */
-   private void identifierList() {
-	   enterId();
+   private SymbolEntry identifierList() {
+	   SymbolEntry list = enterId();
+	   System.out.println(token);
 	   while(token.code == Token.COMMA) {
 		   token = scanner.nextToken();
 		   //accept(Token.ID, "identifier expected");
-		   enterId();
+		   list.append(enterId());
+		   //enterId();
 	   }
+	   return list;
    }
 
    /*
@@ -450,7 +470,7 @@ public class Parser extends Object{
    procedureCallStatement = <procedure>name [ actualParameterPart ] ";"
    */
    private void assignmentOrCallStatement(){
-      name();
+      SymbolEntry entry = name();
       if (token.code == Token.GETS){
          token = scanner.nextToken();
          expression();
@@ -487,7 +507,7 @@ public class Parser extends Object{
    */
    private void relation() {
 	   simpleExpression();
-	   if (token.code == Token.EQ | token.code == Token.NE | token.code == Token.LE | token.code == Token.GE | token.code == Token.GT | token.code == Token.LT) {
+	   if (relationalOperator.contains(token.code)) {
 		   token = scanner.nextToken();
 		   simpleExpression();
 	   }	   
@@ -512,7 +532,7 @@ public class Parser extends Object{
    */
    private void term() {
 	   factor();
-	   while(token.code == Token.MUL | token.code == Token.DIV | token.code == Token.MOD) {
+	   while(multiplyingOperator.contains(token.code)) {
 		   token = scanner.nextToken();
 		   factor();
 	   }
@@ -540,10 +560,10 @@ public class Parser extends Object{
       switch (token.code){
          case Token.INT:
          case Token.CHAR:
-            token = scanner.nextToken();
-            break;
+        	token = scanner.nextToken();
+        	break;
          case Token.ID:
-            name();
+            SymbolEntry entry = name();
             break;
          case Token.L_PAR:
             token = scanner.nextToken();
@@ -557,11 +577,12 @@ public class Parser extends Object{
    /*
    name = identifier [ indexedComponent ]
    */
-   private void name(){
+   private SymbolEntry name(){
       //accept(Token.ID, "identifier expected");
-	  findId();
+	  SymbolEntry entry = findId();
       if (token.code == Token.L_PAR) 
          indexedComponent();
+      return entry;
    }
 
    /*
