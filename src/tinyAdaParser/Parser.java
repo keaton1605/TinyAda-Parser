@@ -14,6 +14,7 @@ public class Parser extends Object{
    private Scanner scanner;
    private Token token;
    private SymbolTable table;
+   public int flag;
    
    private Set<Integer> addingOperator,
                         multiplyingOperator,
@@ -108,10 +109,18 @@ public class Parser extends Object{
       return entry;
    }
 
-   public void parse(){
+   public void parse(String flags){
+	  if (flags.contentEquals("-s"))
+		  flag = 2;
+	  else if (flags.contentEquals("-r"))
+		  flag = 1;
+	  else
+		  flag = 0;
+	  //System.out.println(flag);
       subprogramBody();
       accept(Token.EOF, "extra symbols after logical end of program");
-      table.exitScope();
+      if (flag != 0)
+    	  table.exitScope();
    }
 
    /*
@@ -128,7 +137,8 @@ public class Parser extends Object{
       accept(Token.BEGIN, "'begin' expected");
       sequenceOfStatements();
       accept(Token.END, "'end' expected");
-      table.exitScope();
+      if (flag != 0)
+    	  table.exitScope();
       if (token.code == Token.ID) {
    	     //accept(Token.ID, "identifier expected");
          findId();

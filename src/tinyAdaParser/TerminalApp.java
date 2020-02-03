@@ -12,21 +12,22 @@ public class TerminalApp{
    private Scanner scanner;
    private Parser parser;
 
-   public TerminalApp(String filename){
+   public TerminalApp(String[] filename){
 
       FileInputStream stream;
       try{
-         stream = new FileInputStream(filename);
-     }catch(IOException e){
+         stream = new FileInputStream(filename[0]);
+      }catch(IOException e){
          System.out.println("Error opening file.");
          return;
       }      
       chario = new Chario(stream);
-      //testChario();
       scanner = new Scanner(chario);
-      //testScanner();
       parser = new Parser(chario, scanner);
-      testParser();
+      if (filename.length == 1)
+    	  testParser("-a");
+      else
+    	  testParser(filename[1]);
    }
 
    private void testChario(){
@@ -45,9 +46,9 @@ public class TerminalApp{
       chario.reportErrors();
    }
 
-   private void testParser(){
+   private void testParser(String flag){
       try{
-         parser.parse();
+         parser.parse(flag);
       }
       catch(Exception e){}
       chario.reportErrors();
@@ -57,6 +58,6 @@ public class TerminalApp{
 	  if (args.length < 1)
 		  System.out.println("Error opening file.");
 	  else
-		  new TerminalApp(args[0]);
+		  new TerminalApp(args);
    }
 }

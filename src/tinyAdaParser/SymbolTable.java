@@ -57,7 +57,7 @@ public class SymbolTable extends Object{
       chario.println("\nLevel " + level);
       chario.println("---------");
       for (SymbolEntry s : table.values())
-         chario.println(s.toString());
+         chario.println("Name: " + s.toString());
    }
 
 }
