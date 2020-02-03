@@ -3,6 +3,9 @@
 // Note that EBNF rules are provided in comments
 // Just add new methods below rules without them
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.*;
 import java.util.*;
 
 public class Parser extends Object{
@@ -563,7 +566,6 @@ public class Parser extends Object{
 	   }
 	   accept(Token.R_PAR, "')' expected");
    }
-   
    
    public static void main(String[] args)
    {

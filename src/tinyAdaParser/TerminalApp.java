@@ -12,10 +12,8 @@ public class TerminalApp{
    private Scanner scanner;
    private Parser parser;
 
-   public TerminalApp(){
-      java.util.Scanner reader = new java.util.Scanner(System.in);
-      System.out.print("Enter the input file name: ");
-      String filename = reader.nextLine();
+   public TerminalApp(String filename){
+
       FileInputStream stream;
       try{
          stream = new FileInputStream(filename);
@@ -56,6 +54,9 @@ public class TerminalApp{
    }
 
    public static void main(String args[]){
-      new TerminalApp();
+	  if (args.length < 1)
+		  System.out.println("Error opening file.");
+	  else
+		  new TerminalApp(args[0]);
    }
 }
