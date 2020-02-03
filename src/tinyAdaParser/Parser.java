@@ -130,7 +130,7 @@ public class Parser extends Object{
       subprogramBody();
       accept(Token.EOF, "extra symbols after logical end of program");
       if (flag != 0)
-    	  table.exitScope();
+    	  table.exitScope(flag);
    }
 
    /*
@@ -148,7 +148,7 @@ public class Parser extends Object{
       sequenceOfStatements();
       accept(Token.END, "'end' expected");
       if (flag != 0)
-    	  table.exitScope();
+    	  table.exitScope(flag);
       if (token.code == Token.ID) {
    	     //accept(Token.ID, "identifier expected");
          SymbolEntry entry = findId();

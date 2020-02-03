@@ -23,9 +23,9 @@ public class SymbolTable extends Object{
       level++;
    }
 
-   public void exitScope(){
+   public void exitScope(int flag){
       Map<String, SymbolEntry> table = stack.pop();
-      printTable(table);
+      printTable(table, flag);
       level--;
    }
 
@@ -53,11 +53,15 @@ public class SymbolTable extends Object{
       return EMPTY_SYMBOL;
    }
          
-   private void printTable(Map<String, SymbolEntry> table){
+   private void printTable(Map<String, SymbolEntry> table, int flag){
       chario.println("\nLevel " + level);
       chario.println("---------");
-      for (SymbolEntry s : table.values())
-         chario.println("Name: " + s.toString());
+      for (SymbolEntry s : table.values()) {
+    	  if (flag == 1)
+    		  chario.println(s.toStringRole());
+    	  else
+    		  chario.println("Name: " + s.toStringScope());
+      }
    }
 
 }

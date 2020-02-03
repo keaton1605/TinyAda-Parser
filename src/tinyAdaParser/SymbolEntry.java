@@ -17,8 +17,12 @@ public class SymbolEntry extends Object{
       next = null;
    }
 
-   public String toString(){
-      return name + "\n" + "Role: " + roleToString();
+   public String toStringRole(){
+      return "Name: " + name + "\n" + "Role: " + roleToString();
+   }
+   
+   public String toStringScope(){
+	  return name;
    }
 
    public void setRole(int r){
