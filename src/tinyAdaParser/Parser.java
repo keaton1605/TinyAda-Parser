@@ -90,13 +90,18 @@ public class Parser extends Object{
    */
    
    private void initTable(){
-	  table = new SymbolTable(chario);
-	  table.enterScope();
-	  table.enterSymbol("BOOLEAN");
-	  table.enterSymbol("CHAR");
-	  table.enterSymbol("INTEGER");
-	  table.enterSymbol("TRUE");
-	  table.enterSymbol("FALSE");
+      table = new SymbolTable(chario);
+      table.enterScope();
+      SymbolEntry entry = table.enterSymbol("BOOLEAN");
+      entry.setRole(SymbolEntry.TYPE);
+      entry = table.enterSymbol("CHAR");
+      entry.setRole(SymbolEntry.TYPE);
+      entry = table.enterSymbol("INTEGER");
+      entry.setRole(SymbolEntry.TYPE);
+      entry = table.enterSymbol("TRUE");
+      entry.setRole(SymbolEntry.CONST);
+      entry = table.enterSymbol("FALSE");
+      entry.setRole(SymbolEntry.CONST);
    }      
 
    private SymbolEntry enterId(){
@@ -186,7 +191,8 @@ public class Parser extends Object{
    parameterSpecification = identifierList ":" mode <type>identifier
    */
     private void parameterSpecification() {
-    	/*SymbolEntry list = */identifierList();
+    	SymbolEntry list = identifierList();
+    	list.setRole(SymbolEntry.PARAM);
     	accept(Token.COLON, "':' expected");
     	mode();
     	//accept(Token.ID, "identifier expected");
@@ -348,7 +354,6 @@ public class Parser extends Object{
    */
    private SymbolEntry identifierList() {
 	   SymbolEntry list = enterId();
-	   System.out.println(token);
 	   while(token.code == Token.COMMA) {
 		   token = scanner.nextToken();
 		   //accept(Token.ID, "identifier expected");
