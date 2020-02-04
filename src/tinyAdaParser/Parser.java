@@ -157,6 +157,7 @@ public class Parser extends Object{
       if (token.code == Token.ID) {
    	     //accept(Token.ID, "identifier expected");
          SymbolEntry entry = findId();
+         acceptRole(entry, SymbolEntry.PROC, "must be a procedure name");
       }
       accept(Token.SEMI, "semicolon expected");
    }
@@ -197,6 +198,7 @@ public class Parser extends Object{
     	mode();
     	//accept(Token.ID, "identifier expected");
     	SymbolEntry entry = findId();
+    	acceptRole(entry, SymbolEntry.TYPE, "must be a type name");
     }
     
    /*
@@ -289,7 +291,8 @@ public class Parser extends Object{
 	           break;
 	        case Token.ID:
 	        	//accept(Token.ID, "identifier expected");
-	        	findId();
+	        	SymbolEntry entry = findId();
+	        	acceptRole(entry, SymbolEntry.TYPE, "must be a type name");
 	        	break;
 	        default: fatalError("error in definition part");
 	   }
@@ -300,8 +303,8 @@ public class Parser extends Object{
    */
    private void enumerationTypeDefinition() {
 	   accept(Token.L_PAR, "'(' expected");
-	   /*SymbolEntry list = */identifierList();
-	   //list.setRole(SymbolEntry.CONST);
+	   SymbolEntry list = identifierList();
+	   list.setRole(SymbolEntry.CONST);
 	   accept(Token.R_PAR, "')' expected");
    }
    
@@ -319,7 +322,8 @@ public class Parser extends Object{
 	   accept(Token.R_PAR, "')' expected");
 	   accept(Token.OF, "'of' expected");
 	   //accept(Token.ID, "identifier expected");
-	   findId();
+	   SymbolEntry entry = findId();
+	   acceptRole(entry, SymbolEntry.TYPE, "must be a type name");
    }
 
    /*
@@ -464,8 +468,10 @@ public class Parser extends Object{
    */
    private void exitStatement() {
 	   accept(Token.EXIT, "'exit' expected");
-	   if (token.code == Token.WHEN)
+	   if (token.code == Token.WHEN) {
+		   token = scanner.nextToken();
 		   condition();
+	   }
 	   accept(Token.SEMI, "semicolon expected");
    }
 
