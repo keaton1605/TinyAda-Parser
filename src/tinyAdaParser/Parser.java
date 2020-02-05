@@ -65,13 +65,16 @@ public class Parser extends Object{
    }
 
    private void acceptRole(SymbolEntry s, int expected, String errorMessage){
-      if (s.role != SymbolEntry.NONE && s.role != expected)
-         chario.putError(errorMessage);
+      if (s.role != SymbolEntry.NONE && s.role != expected) {
+    	  if (flag == 1)
+    		  chario.putError(errorMessage);
+      }
    }
 
    private void acceptRole(SymbolEntry s, Set<Integer> expected, String errorMessage){
       if (s.role != SymbolEntry.NONE && ! (expected.contains(s.role)))
-         chario.putError(errorMessage);
+    	  if (flag == 1)
+    		  chario.putError(errorMessage);
    }
    
    private void accept(int expected, String errorMessage){
@@ -108,8 +111,10 @@ public class Parser extends Object{
       SymbolEntry entry = null;
       if (token.code == Token.ID)
          entry = table.enterSymbol(token.string);
-      else
-         fatalError("identifier expected");
+      else {
+    	  if (flag != 0)
+    		  fatalError("identifier expected");
+      }
       token = scanner.nextToken();
       return entry;
    }
@@ -118,8 +123,10 @@ public class Parser extends Object{
       SymbolEntry entry = null;
       if (token.code == Token.ID)
          entry = table.findSymbol(token.string);
-      else
-         fatalError("identifier expected");
+      else {
+    	  if (flag != 0)
+    		  fatalError("identifier expected");
+      }
       token = scanner.nextToken();
       return entry;
    }
@@ -131,7 +138,6 @@ public class Parser extends Object{
 		  flag = 1;
 	  else
 		  flag = 0;
-	  //System.out.println(flag);
       subprogramBody();
       accept(Token.EOF, "extra symbols after logical end of program");
       if (flag != 0)
@@ -155,7 +161,6 @@ public class Parser extends Object{
       if (flag != 0)
     	  table.exitScope(flag);
       if (token.code == Token.ID) {
-   	     //accept(Token.ID, "identifier expected");
          SymbolEntry entry = findId();
          acceptRole(entry, SymbolEntry.PROC, "must be a procedure name");
       }
@@ -167,7 +172,6 @@ public class Parser extends Object{
    */
     private void subprogramSpecification() {
     	accept(Token.PROC, "'procedure' expected");
- 	    //accept(Token.ID, "identifier expected");
     	SymbolEntry entry = enterId();
     	entry.setRole(SymbolEntry.PROC);
     	table.enterScope();
@@ -196,7 +200,6 @@ public class Parser extends Object{
     	list.setRole(SymbolEntry.PARAM);
     	accept(Token.COLON, "':' expected");
     	mode();
-    	//accept(Token.ID, "identifier expected");
     	SymbolEntry entry = findId();
     	acceptRole(entry, SymbolEntry.TYPE, "must be a type name");
     }
@@ -266,7 +269,6 @@ public class Parser extends Object{
    */
    private void typeDeclaration() {
 	   accept(Token.TYPE, "'type' expected");
-	   //accept(Token.ID, "identifier expected");
 	   SymbolEntry entry = enterId();
 	   entry.setRole(SymbolEntry.TYPE);
 	   accept(Token.IS, "'is' expected");
@@ -290,7 +292,6 @@ public class Parser extends Object{
 	           range();
 	           break;
 	        case Token.ID:
-	        	//accept(Token.ID, "identifier expected");
 	        	SymbolEntry entry = findId();
 	        	acceptRole(entry, SymbolEntry.TYPE, "must be a type name");
 	        	break;
@@ -321,7 +322,6 @@ public class Parser extends Object{
 	   }
 	   accept(Token.R_PAR, "')' expected");
 	   accept(Token.OF, "'of' expected");
-	   //accept(Token.ID, "identifier expected");
 	   SymbolEntry entry = findId();
 	   acceptRole(entry, SymbolEntry.TYPE, "must be a type name");
    }
@@ -335,7 +335,6 @@ public class Parser extends Object{
 	   			range();
 	   			break;
 	   		case Token.ID:
-	   			//accept(Token.ID, "identifier expected");
 	   			SymbolEntry entry = findId();
 	   			acceptRole(entry, SymbolEntry.TYPE, "must be a type name");
 	   			break;
@@ -360,9 +359,7 @@ public class Parser extends Object{
 	   SymbolEntry list = enterId();
 	   while(token.code == Token.COMMA) {
 		   token = scanner.nextToken();
-		   //accept(Token.ID, "identifier expected");
 		   list.append(enterId());
-		   //enterId();
 	   }
 	   return list;
    }
@@ -424,7 +421,7 @@ public class Parser extends Object{
 	   accept(Token.LOOP, "'loop' expected");
 	   sequenceOfStatements();
 	   accept(Token.END, "'end' expected");
-	   accept(Token.LOOP, "'loops' expected");
+	   accept(Token.LOOP, "'loop' expected");
 	   accept(Token.SEMI, "semicolon expected");
    }
    
@@ -589,7 +586,6 @@ public class Parser extends Object{
    name = identifier [ indexedComponent ]
    */
    private SymbolEntry name(){
-      //accept(Token.ID, "identifier expected");
 	  SymbolEntry entry = findId();
       if (token.code == Token.L_PAR) 
          indexedComponent();
