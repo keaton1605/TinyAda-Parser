@@ -109,10 +109,10 @@ public class Parser extends Object{
 
    private SymbolEntry enterId(){
       SymbolEntry entry = null;
-      if (token.code == Token.ID)
-         entry = table.enterSymbol(token.string);
-      else {
-    	  if (flag != 0)
+      if (flag != 0) {
+    	  if (token.code == Token.ID)
+    		  entry = table.enterSymbol(token.string);
+    	  else
     		  fatalError("identifier expected");
       }
       token = scanner.nextToken();
@@ -121,10 +121,10 @@ public class Parser extends Object{
 
    private SymbolEntry findId(){
       SymbolEntry entry = null;
-      if (token.code == Token.ID)
-         entry = table.findSymbol(token.string);
-      else {
-    	  if (flag != 0)
+      if (flag != 0) {
+    	  if (token.code == Token.ID)
+    	  	  entry = table.findSymbol(token.string);
+      	  else 
     		  fatalError("identifier expected");
       }
       token = scanner.nextToken();
