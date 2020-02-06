@@ -3,6 +3,18 @@
 // Note that EBNF rules are provided in comments
 // Just add new methods below rules without them
 
+// p1: Tests multiple typeDefinitions, AddingOperators, multiplyingOperators, enumerationTypeDefinition
+// p2: Tests exitStatement, while loops, identifierList
+// p3: Tests nested if-else statements, simpleExpressions, multiple expressions, multiple relationalOperators
+// p4: Tests nested while loops, subprogramBody (this was our initial test)
+// p5: Tests multiple typeDefinitions, range, arrayTypeDefinition
+
+// f1: Tests for missing semicolon, undeclared identifier (scope)
+// f2: Tests for missing end loop
+// f3: Tests having an elsif after an else
+// f4: Tests for wrong placement of procedure
+// f5: Tests for wrong array syntax
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.*;
