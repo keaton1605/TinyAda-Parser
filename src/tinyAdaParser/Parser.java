@@ -26,7 +26,10 @@ public class Parser extends Object{
    private Scanner scanner;
    private Token token;
    private SymbolTable table;
-   public int flag;					//Int to determine whether scope or role analysis is applied.
+   public int flag;					
+   
+   //table: table holding all of the symbol entries 
+   //flag: int to determine whether scope or role analysis is applied.
    
    private Set<Integer> addingOperator,
                         multiplyingOperator,
@@ -81,13 +84,13 @@ public class Parser extends Object{
     	  if (flag == 1)
     		  chario.putError(errorMessage);
       }
-   }
+   } //Performs role analysis on input identifier, only prints if toggled
 
    private void acceptRole(SymbolEntry s, Set<Integer> expected, String errorMessage){
       if (s.role != SymbolEntry.NONE && ! (expected.contains(s.role)))
     	  if (flag == 1)
     		  chario.putError(errorMessage);
-   }
+   } //Performs role analysis on input identifier, only prints if toggled
    
    private void accept(int expected, String errorMessage){
       if (token.code != expected)
@@ -127,6 +130,7 @@ public class Parser extends Object{
    	      if (flag != 0)
    	    	  fatalError("identifier expected");
       }	//Performs the analysis no matter the flag, only prints results with certain flags
+      
       token = scanner.nextToken();
       return entry;
    }
@@ -139,6 +143,7 @@ public class Parser extends Object{
    	      if (flag != 0) 
    	    	  fatalError("identifier expected");
       } //Performs the analysis no matter the flag, only prints results with certain flags
+   	 
       token = scanner.nextToken();
       return entry;
    }
@@ -177,10 +182,13 @@ public class Parser extends Object{
       accept(Token.END, "'end' expected");
       if (flag != 0)
     	  table.exitScope(flag);
+      //Prints errors if flag toggled
+      
       if (token.code == Token.ID) {
          SymbolEntry entry = findId();
          acceptRole(entry, SymbolEntry.PROC, "must be a procedure name");
-      }
+      } //Does role analysis on the identifier
+      
       accept(Token.SEMI, "semicolon expected");
    }
 
@@ -192,6 +200,8 @@ public class Parser extends Object{
     	SymbolEntry entry = enterId();
     	entry.setRole(SymbolEntry.PROC);
     	table.enterScope();
+    	//Whenever a new procedure is called, enter a new scope
+    	
     	if (token.code == Token.L_PAR)
     		formalPart();
     }
@@ -277,7 +287,8 @@ public class Parser extends Object{
       else {
          list.setRole(SymbolEntry.VAR);
          typeDefinition();
-      }
+      } //Sets the role of each entry in the identifierList
+      
       accept(Token.SEMI, "semicolon expected");
    }
 
@@ -377,7 +388,8 @@ public class Parser extends Object{
 	   while(token.code == Token.COMMA) {
 		   token = scanner.nextToken();
 		   list.append(enterId());
-	   }
+	   } //Appends each identifier to the first SymbolEntry
+	   
 	   return list;
    }
 
