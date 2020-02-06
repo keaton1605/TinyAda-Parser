@@ -26,7 +26,7 @@ public class Parser extends Object{
    private Scanner scanner;
    private Token token;
    private SymbolTable table;
-   public int flag;
+   public int flag;					//Int to determine whether scope or role analysis is applied.
    
    private Set<Integer> addingOperator,
                         multiplyingOperator,
@@ -126,7 +126,7 @@ public class Parser extends Object{
    	  else {
    	      if (flag != 0)
    	    	  fatalError("identifier expected");
-      }
+      }	//Performs the analysis no matter the flag, only prints results with certain flags
       token = scanner.nextToken();
       return entry;
    }
@@ -138,12 +138,17 @@ public class Parser extends Object{
    	  else {
    	      if (flag != 0) 
    	    	  fatalError("identifier expected");
-      }
+      } //Performs the analysis no matter the flag, only prints results with certain flags
       token = scanner.nextToken();
       return entry;
    }
 
    public void parse(String flags){
+	   
+	  /*
+	   * Initializes the flag value 
+	   */
+	   
 	  if (flags.contentEquals("-s"))
 		  flag = 2;
 	  else if (flags.contentEquals("-r"))
