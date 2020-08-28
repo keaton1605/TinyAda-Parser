@@ -9,7 +9,7 @@ Modifying the code requires the JDK 6.0 or later versions.
 
 With the GUI app, you can open a test file and separately test the chario, scanner, and parser classes using command buttons.  You can also edit the file and save it.  Finally, you can enter a test file from scratch.
 
-The only file to edit and complie is Parser.java.  If you are using a terminal window, you compile this file using the command
+If you are using a terminal window, you compile this file using the command
 
 javac Parser.java
 
